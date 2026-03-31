@@ -19,14 +19,15 @@
         input { flex: 1; padding: 14px; border-radius: 10px; border: 1px solid #333; background: #1a1a1a; color: #fff; font-size: 15px; }
         input:focus { border-color: #2ecc71; outline: none; }
         .btn-add { background: #2ecc71; color: #000; border: none; padding: 0 20px; border-radius: 10px; font-weight: bold; font-size: 20px; transition: 0.3s; }
-        .btn-add:active { transform: scale(0.9); }
 
         .limite-aba { background: #161616; padding: 15px; border-radius: 12px; margin-top: 10px; }
         .btn-limite { width: 100%; background: #222; color: #aaa; border: 1px solid #333; padding: 10px; border-radius: 8px; margin-top: 8px; font-size: 12px; }
 
-        .historico { height: 180px; overflow-y: auto; background: #0d0d0d; padding: 12px; border-radius: 10px; font-size: 14px; border: 1px solid #222; margin-top: 15px; }
-        .hist-item { display: flex; justify-content: space-between; padding: 8px 5px; border-bottom: 1px solid #1a1a1a; color: #eee; }
-        .hist-item small { color: #555; font-size: 11px; }
+        .historico { height: 220px; overflow-y: auto; background: #0d0d0d; padding: 12px; border-radius: 10px; font-size: 14px; border: 1px solid #222; margin-top: 15px; }
+        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 5px; border-bottom: 1px solid #1a1a1a; color: #eee; }
+        .hist-info { display: flex; flex-direction: column; }
+        .hist-info small { color: #555; font-size: 11px; }
+        .btn-del-item { background: none; border: none; color: #ff4444; font-weight: bold; cursor: pointer; padding: 5px 10px; font-size: 16px; }
     </style>
 </head>
 <body>
@@ -55,16 +56,16 @@
     </div>
 
     <div class="historico" id="lista"></div>
-    <div style="text-align: center; margin-top: 15px; font-size: 11px; color: #444;">O histórico reseta sozinho a cada novo mês.</div>
+    <div style="text-align: center; margin-top: 15px; font-size: 11px; color: #444;">Histórico automático | Clique no X para apagar erro.</div>
 </div>
 
 <script>
     function checarResetMensal() {
         const data = new Date();
         const mesChave = data.getMonth() + "-" + data.getFullYear();
-        if (localStorage.getItem('mesAtivo') !== mesChave) {
-            localStorage.setItem('histEnerg', JSON.stringify([]));
-            localStorage.setItem('mesAtivo', mesChave);
+        if (localStorage.getItem('mesAtivoEn') !== mesChave) {
+            localStorage.setItem('histEnergia', JSON.stringify([]));
+            localStorage.setItem('mesAtivoEn', mesChave);
         }
     }
 
@@ -73,30 +74,37 @@
         const nome = campo.value.trim();
         if (!nome) return;
 
-        const hist = JSON.parse(localStorage.getItem('histEnerg') || "[]");
-        hist.push({ nome: nome, data: new Date().toLocaleDateString('pt-br') });
+        const hist = JSON.parse(localStorage.getItem('histEnergia') || "[]");
+        // Salva com um ID único baseado no tempo para poder apagar o certo
+        hist.push({ id: Date.now(), nome: nome, data: new Date().toLocaleDateString('pt-br') });
         
-        localStorage.setItem('histEnerg', JSON.stringify(hist));
+        localStorage.setItem('histEnergia', JSON.stringify(hist));
         campo.value = "";
+        renderizar();
+    }
+
+    function apagarItem(id) {
+        let hist = JSON.parse(localStorage.getItem('histEnergia') || "[]");
+        hist = hist.filter(item => item.id !== id);
+        localStorage.setItem('histEnergia', JSON.stringify(hist));
         renderizar();
     }
 
     function setLimite() {
         const lim = document.getElementById('inputLimite').value;
-        localStorage.setItem('limiteMax', lim);
+        localStorage.setItem('limiteMaxEn', lim);
         document.getElementById('inputLimite').value = "";
         renderizar();
     }
 
     function renderizar() {
-        const hist = JSON.parse(localStorage.getItem('histEnerg') || "[]");
-        const limite = localStorage.getItem('limiteMax');
+        const hist = JSON.parse(localStorage.getItem('histEnergia') || "[]");
+        const limite = localStorage.getItem('limiteMaxEn');
         
-        // Total e Alerta 10+
         document.getElementById('totalMes').innerText = hist.length + " UNIDADES";
         document.getElementById('alerta').style.display = hist.length >= 10 ? 'block' : 'none';
 
-        // Lógica do Favorito (Nome Inteiro)
+        // Lógica do Campeão
         const contagem = {};
         hist.forEach(i => {
             const n = i.nome.toUpperCase();
@@ -120,11 +128,14 @@
             displayLim.style.color = hist.length >= limite ? "#ff4444" : "#2ecc71";
         }
 
-        // Lista
+        // Lista com botão de apagar
         document.getElementById('lista').innerHTML = hist.slice().reverse().map(i => `
             <div class="hist-item">
-                <span>${i.nome}</span>
-                <small>${i.data}</small>
+                <div class="hist-info">
+                    <span>${i.nome}</span>
+                    <small>${i.data}</small>
+                </div>
+                <button class="btn-del-item" onclick="apagarItem(${i.id})">×</button>
             </div>
         `).join('');
     }
