@@ -9,25 +9,36 @@
         .card { background: #111; width: 100%; max-width: 420px; padding: 25px; border-radius: 20px; border: 1px solid #2ecc71; box-shadow: 0 0 15px rgba(46, 204, 113, 0.2); }
         h1 { color: #2ecc71; text-align: center; font-size: 24px; letter-spacing: 1px; margin-bottom: 25px; }
         
-        .status-box { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 20px; border-left: 5px solid #2ecc71; }
-        .stats { font-size: 13px; color: #888; margin-bottom: 8px; text-transform: uppercase; }
-        .stats b { color: #fff; font-size: 15px; display: block; margin-top: 2px; }
+        .status-box { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #2ecc71; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stats { font-size: 10px; color: #888; text-transform: uppercase; }
+        .stats b { color: #fff; font-size: 12px; display: block; margin-top: 2px; line-height: 1.2; }
         
-        #alerta { display: none; background: #441111; color: #ff5555; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; font-weight: bold; text-align: center; border: 1px solid #ff0000; line-height: 1.4; }
+        .placar-marcas { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; justify-content: center; }
+        .pill-marca { background: #0d0d0d; border: 1px solid #333; padding: 4px 10px; border-radius: 12px; font-size: 10px; color: #aaa; }
+        .pill-marca b { color: #2ecc71; margin-left: 3px; }
+
+        .prog-bg { grid-column: span 2; background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .prog-fill { background: #2ecc71; height: 100%; width: 0%; transition: 0.5s; }
+
+        #alerta { display: none; background: #441111; color: #ff5555; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 12px; font-weight: bold; text-align: center; border: 1px solid #ff0000; }
         
-        .input-group { display: flex; gap: 8px; margin-bottom: 20px; }
-        input { flex: 1; padding: 14px; border-radius: 10px; border: 1px solid #333; background: #1a1a1a; color: #fff; font-size: 15px; }
-        input:focus { border-color: #2ecc71; outline: none; }
-        .btn-add { background: #2ecc71; color: #000; border: none; padding: 0 20px; border-radius: 10px; font-weight: bold; font-size: 20px; transition: 0.3s; }
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .row { display: flex; gap: 8px; }
+        select, input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #1a1a1a; color: #fff; font-size: 14px; outline: none; }
+        input:focus { border-color: #2ecc71; }
+        
+        .btn-add { background: #2ecc71; color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; }
 
-        .limite-aba { background: #161616; padding: 15px; border-radius: 12px; margin-top: 10px; }
-        .btn-limite { width: 100%; background: #222; color: #aaa; border: 1px solid #333; padding: 10px; border-radius: 8px; margin-top: 8px; font-size: 12px; }
-
-        .historico { height: 220px; overflow-y: auto; background: #0d0d0d; padding: 12px; border-radius: 10px; font-size: 14px; border: 1px solid #222; margin-top: 15px; }
-        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 5px; border-bottom: 1px solid #1a1a1a; color: #eee; }
-        .hist-info { display: flex; flex-direction: column; }
-        .hist-info small { color: #555; font-size: 11px; }
-        .btn-del-item { background: none; border: none; color: #ff4444; font-weight: bold; cursor: pointer; padding: 5px 10px; font-size: 16px; }
+        .historico { height: 200px; overflow-y: auto; background: #0d0d0d; padding: 12px; border-radius: 10px; border: 1px solid #222; margin-top: 15px; }
+        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 5px; border-bottom: 1px solid #1a1a1a; }
+        .item-txt strong { color: #2ecc71; font-size: 14px; display: block; }
+        .item-txt span { font-size: 12px; color: #ccc; }
+        .item-txt small { color: #555; font-size: 10px; display: block; margin-top: 2px; }
+        
+        .btn-obs { display: flex; gap: 8px; }
+        .icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: #444; padding: 5px; }
+        .edit-btn:hover { color: #2ecc71; }
+        .del-btn:hover { color: #ff5555; }
     </style>
 </head>
 <body>
@@ -35,114 +46,153 @@
 <div class="card">
     <h1>🔋 STATUS ENERGIA</h1>
     
-    <div id="alerta">
-        🚨 CUIDADO: ENERGÉTICO EM EXCESSO PODE PREJUDICAR SEU CORAÇÃO A LONGO PRAZO. SE CUIDE 🤝🏻
-    </div>
+    <div id="alerta">🚨 VAI COM CALMA CAMPEÃO, ESPERE PELO PRÓX. MÊS! EXCEDEU SEU LIMITE!</div>
 
     <div class="status-box">
-        <div class="stats">O MAIS TOMADO (CAMPEÃO):<br><b id="maisTomado" style="color:#2ecc71">---</b></div>
-        <div class="stats">TOTAL DO MÊS: <b id="totalMes">0 UNIDADES</b></div>
+        <div class="stats">MÊS +TOMADO:<br><b id="favMes">---</b></div>
+        <div class="stats">ANO +TOMADO:<br><b id="favAno">---</b></div>
+        <div class="stats">TOTAL MÊS:<br><b id="totalMes">0 UNID.</b></div>
+        <div class="stats">TOTAL ANO:<br><b id="totalAno">0 UNID.</b></div>
+        <div class="stats" style="grid-column: span 2;">GASTO MENSAL: <b id="gastoMes" style="color:#2ecc71; display:inline">R$ 0,00</b></div>
+        <div class="prog-bg"><div id="progBar" class="prog-fill"></div></div>
     </div>
+
+    <div class="placar-marcas" id="placarMarcas"></div>
 
     <div class="input-group">
-        <input type="text" id="nomeEnergetico" placeholder="Qual você tomou agora?">
-        <button class="btn-add" onclick="adicionar()">+</button>
-    </div>
-
-    <div class="limite-aba">
-        <div class="stats" style="margin:0">META DE LIMITE: <span id="valLimite" style="color:#fff">Não definido</span></div>
-        <input type="number" id="inputLimite" placeholder="Ex: 5" style="width: 80%; padding: 8px; margin-top: 10px; font-size: 13px;">
-        <button class="btn-limite" onclick="setLimite()">DEFINIR LIMITE MENSAL</button>
+        <div class="row">
+            <select id="marca">
+                <option value="MONSTER">MONSTER</option>
+                <option value="REDBULL">RED BULL</option>
+                <option value="BALY">BALY</option>
+                <option value="ELEV FRUKI">ELEV</option>
+                <option value="OUTRO">OUTRO</option>
+            </select>
+            <input type="text" id="preco" placeholder="R$ 0,00" oninput="moneyMask(this)">
+        </div>
+        <input type="text" id="sabor" placeholder="Sabor ou cor (Ex: Ultra Paradise)">
+        <button class="btn-add" id="btnSalvar" onclick="salvar()">REGISTRAR AGORA ⚡</button>
     </div>
 
     <div class="historico" id="lista"></div>
-    <div style="text-align: center; margin-top: 15px; font-size: 11px; color: #444;">Histórico automático | Clique no X para apagar erro.</div>
 </div>
 
 <script>
-    function checarResetMensal() {
-        const data = new Date();
-        const mesChave = data.getMonth() + "-" + data.getFullYear();
-        if (localStorage.getItem('mesAtivoEn') !== mesChave) {
-            localStorage.setItem('histEnergia', JSON.stringify([]));
-            localStorage.setItem('mesAtivoEn', mesChave);
-        }
+    let editId = null;
+    const LIMITE_PADRAO = 5; 
+
+    function moneyMask(i) {
+        let v = i.value.replace(/\D/g,'');
+        v = (v/100).toFixed(2) + '';
+        v = v.replace(".", ",");
+        i.value = "R$ " + v;
     }
 
-    function adicionar() {
-        const campo = document.getElementById('nomeEnergetico');
-        const nome = campo.value.trim();
-        if (!nome) return;
+    function getMes() { return (new Date().getMonth() + 1) + "-" + new Date().getFullYear(); }
 
-        const hist = JSON.parse(localStorage.getItem('histEnergia') || "[]");
-        // Salva com um ID único baseado no tempo para poder apagar o certo
-        hist.push({ id: Date.now(), nome: nome, data: new Date().toLocaleDateString('pt-br') });
+    function salvar() {
+        const marca = document.getElementById('marca').value;
+        const saborInput = document.getElementById('sabor').value.trim();
+        const sabor = saborInput || "TRADICIONAL";
+        const precoStr = document.getElementById('preco').value.replace("R$ ", "").replace(",", ".");
+        const preco = parseFloat(precoStr) || 0;
         
-        localStorage.setItem('histEnergia', JSON.stringify(hist));
-        campo.value = "";
+        let db = JSON.parse(localStorage.getItem('energyDB') || "{}");
+        let mes = getMes();
+        if (!db[mes]) db[mes] = [];
+
+        if (editId) {
+            let idx = db[mes].findIndex(x => x.id === editId);
+            db[mes][idx] = { ...db[mes][idx], marca, sabor, preco };
+            editId = null;
+            document.getElementById('btnSalvar').innerText = "REGISTRAR AGORA ⚡";
+        } else {
+            db[mes].push({ id: Date.now(), marca, sabor, preco, data: new Date().toLocaleDateString('pt-br') });
+        }
+
+        localStorage.setItem('energyDB', JSON.stringify(db));
+        document.getElementById('sabor').value = "";
+        document.getElementById('preco').value = "";
         renderizar();
     }
 
-    function apagarItem(id) {
-        let hist = JSON.parse(localStorage.getItem('histEnergia') || "[]");
-        hist = hist.filter(item => item.id !== id);
-        localStorage.setItem('histEnergia', JSON.stringify(hist));
-        renderizar();
+    function prepararEdicao(id) {
+        let db = JSON.parse(localStorage.getItem('energyDB'))[getMes()];
+        let item = db.find(x => x.id === id);
+        document.getElementById('marca').value = item.marca;
+        document.getElementById('sabor').value = item.sabor;
+        document.getElementById('preco').value = "R$ " + item.preco.toFixed(2).replace('.', ',');
+        editId = id;
+        document.getElementById('btnSalvar').innerText = "ATUALIZAR ITEM ✎";
     }
 
-    function setLimite() {
-        const lim = document.getElementById('inputLimite').value;
-        localStorage.setItem('limiteMaxEn', lim);
-        document.getElementById('inputLimite').value = "";
+    function excluir(id) {
+        if (!confirm("Remover esse registro?")) return;
+        let db = JSON.parse(localStorage.getItem('energyDB'));
+        db[getMes()] = db[getMes()].filter(x => x.id !== id);
+        localStorage.setItem('energyDB', JSON.stringify(db));
         renderizar();
     }
 
     function renderizar() {
-        const hist = JSON.parse(localStorage.getItem('histEnergia') || "[]");
-        const limite = localStorage.getItem('limiteMaxEn');
-        
-        document.getElementById('totalMes').innerText = hist.length + " UNIDADES";
-        document.getElementById('alerta').style.display = hist.length >= 10 ? 'block' : 'none';
+        const db = JSON.parse(localStorage.getItem('energyDB') || "{}");
+        const mesKey = getMes();
+        const listaMes = db[mesKey] || [];
 
-        // Lógica do Campeão
-        const contagem = {};
-        hist.forEach(i => {
-            const n = i.nome.toUpperCase();
-            contagem[n] = (contagem[n] || 0) + 1;
+        let totalAno = 0, gastoMes = 0;
+        let countMarcasMes = { "MONSTER": 0, "REDBULL": 0, "BALY": 0, "ELEV FRUKI": 0, "OUTRO": 0 };
+        let fullCountMes = {}, fullCountAno = {};
+
+        Object.keys(db).forEach(m => {
+            db[m].forEach(i => {
+                totalAno++;
+                const nomeCompleto = `${i.marca} ${i.sabor}`;
+                fullCountAno[nomeCompleto] = (fullCountAno[nomeCompleto] || 0) + 1;
+                
+                if (m === mesKey) {
+                    gastoMes += i.preco;
+                    fullCountMes[nomeCompleto] = (fullCountMes[nomeCompleto] || 0) + 1;
+                    if(countMarcasMes[i.marca] !== undefined) countMarcasMes[i.marca]++;
+                    else countMarcasMes["OUTRO"]++;
+                }
+            });
         });
 
-        let topNome = "---";
-        let topQtd = 0;
-        for (const [nome, qtd] of Object.entries(contagem)) {
-            if (qtd > topQtd) {
-                topQtd = qtd;
-                topNome = nome;
-            }
-        }
-        document.getElementById('maisTomado').innerText = topQtd > 0 ? `${topNome} (${topQtd}x)` : "---";
+        const placar = document.getElementById('placarMarcas');
+        placar.innerHTML = Object.entries(countMarcasMes).map(([m, qtd]) => 
+            `<div class="pill-marca">${m}:<b>${qtd}</b></div>`
+        ).join('');
 
-        // Limite
-        const displayLim = document.getElementById('valLimite');
-        if(limite) {
-            displayLim.innerText = limite;
-            displayLim.style.color = hist.length >= limite ? "#ff4444" : "#2ecc71";
-        }
+        const favM = Object.keys(fullCountMes).reduce((a, b) => fullCountMes[a] > fullCountMes[b] ? a : b, "---");
+        const favA = Object.keys(fullCountAno).reduce((a, b) => fullCountAno[a] > fullCountAno[b] ? a : b, "---");
 
-        // Lista com botão de apagar
-        document.getElementById('lista').innerHTML = hist.slice().reverse().map(i => `
+        document.getElementById('favMes').innerText = fullCountMes[favM] > 0 ? favM : "---";
+        document.getElementById('favAno').innerText = favA;
+        document.getElementById('totalMes').innerText = listaMes.length + " UNID.";
+        document.getElementById('totalAno').innerText = totalAno + " UNID.";
+        document.getElementById('gastoMes').innerText = "R$ " + gastoMes.toFixed(2).replace('.', ',');
+
+        const perc = Math.min((listaMes.length / LIMITE_PADRAO) * 100, 100);
+        document.getElementById('progBar').style.width = perc + "%";
+        document.getElementById('progBar').style.backgroundColor = listaMes.length >= LIMITE_PADRAO ? "#ff4444" : "#2ecc71";
+        document.getElementById('alerta').style.display = listaMes.length >= LIMITE_PADRAO ? 'block' : 'none';
+
+        document.getElementById('lista').innerHTML = listaMes.slice().reverse().map(i => `
             <div class="hist-item">
-                <div class="hist-info">
-                    <span>${i.nome}</span>
+                <div class="item-txt">
+                    <strong>${i.marca}</strong>
+                    <span>${i.sabor} | R$ ${i.preco.toFixed(2).replace('.', ',')}</span>
                     <small>${i.data}</small>
                 </div>
-                <button class="btn-del-item" onclick="apagarItem(${i.id})">×</button>
+                <div class="btn-obs">
+                    <button class="icon-btn edit-btn" onclick="prepararEdicao(${i.id})">✎</button>
+                    <button class="icon-btn del-btn" onclick="excluir(${i.id})">✕</button>
+                </div>
             </div>
         `).join('');
     }
 
-    checarResetMensal();
     renderizar();
 </script>
-
 </body>
 </html>
